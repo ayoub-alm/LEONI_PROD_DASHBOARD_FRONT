@@ -1,0 +1,152 @@
+<header class="navbar navbar navbar-dark blue-bg-color sticky-top flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-0  display-1 bg-white fw-bold" href="/">
+    <img src="assets/logo.png"
+         class="im-fluid "
+         height="32px"
+    style="transform: scale(0.6)">
+  </a>
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="navbar-nav">
+    <div class="nav-item text-nowrap">
+      <h5 class="text-white fw-bold mx-3">Production Line Dashboard</h5>
+    </div>
+  </div>
+</header>
+
+<main class="col-md-12 ms-sm-auto col-lg-12 mt-2">
+  <section class="container-fluid ">
+    <div class="row  bk-glass-blue ">
+      <div class="col-12 ">
+        <form [formGroup]="filterForm">
+          <ul class="orange-bg-color rendedd-3 p-3  d-flex justify-content-around " style="list-style: none;">
+            <!-- <h4 class="blue-color display-6 text-center ">Line dashboard</h4> -->
+            <li class="col-2 ">
+              <label class="label text-white mb-2">Project</label>
+              <select class="form-select" aria-label="Default select example"  formControlName="project">
+                <ng-container *ngFor="let prj of projects.getValue()">
+                  <option  value="{{prj.id}}">{{prj.name}}</option>
+                 </ng-container>
+              </select>
+            </li>
+            <li class="  col-2">
+                <label class="label text-white mb-2">Segment</label>
+              <select class="form-select" aria-label="Default select example"  formControlName="segment">
+                <ng-container *ngFor="let sgm of segments | async">
+                  <option [value]="sgm.id">{{sgm.name}}</option>
+                 </ng-container>
+              </select>
+            </li>
+            <li class="  col-2">
+              <label class="label text-white mb-2">Production line</label>
+              <select class="form-select" aria-label="Default select example" formControlName="line">
+                <ng-container *ngFor="let prl of productionLines | async">
+                  <option [value]="prl.id">{{prl.name}}</option>
+                 </ng-container>
+              </select>
+            </li>
+            <li class="  col-2">
+              <label class="label text-white mb-2">From</label>
+              <input type="datetime-local"  class="form-control"formControlName="from" >
+
+            </li>
+            <li class="  col-2 mt-1">
+              <label class="label text-white mb-12"> To</label>
+              <input type="datetime-local" name="" id="" class="form-control" formControlName="to">
+            </li>
+            <li class="  col-1">
+              <br>
+              <button (click)="getDataWithFilter()"
+               class="btn text-white blue-bg-color"
+               type="button">Filter</button>
+            </li>
+          </ul>
+        </form>
+      </div>
+      <div class="container-fluid">
+        <div class="row d-flex justify-content-around">
+          <mat-card class="col-3 m-1 bk-glass-blue my-auto">
+            <mat-card-title class="orange-color text-center fw-light ">
+              Total of FX 
+            </mat-card-title>
+            <mat-card-content>
+             <h5 class="text-center display-6 light-blue-color m-4"> {{countOfFx.getValue().total_quantity }}</h5>
+            </mat-card-content>
+          </mat-card>
+          <mat-card class="col-4 m-1  bk-glass-blue my-auto">
+            <mat-card-title class="orange-color text-center fw-light ">
+              Efficiency
+            </mat-card-title>
+            <mat-card-content>
+             <h5 class="text-center display-6 text-success m-4"> {{(countOfFx.getValue().total_quantity * 0.5)/(20 * 8)}} 
+              <span class="light-blue-color"> %</span>
+            </h5>
+            </mat-card-content>
+          </mat-card>
+          <mat-card class="col-3 m-1  mt-2 bk-glass-blue my-auto">
+            <mat-card-title class="orange-color text-center fw-light ">
+              Count of Packages 
+            </mat-card-title>
+            <mat-card-content>
+             <h5 class="text-center display-6 light-blue-color m-4"> {{countOfbox.getValue().total_quantity }}</h5>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="col-6 mt-2 bk-glass-blue">
+            <mat-card-title class="blue-color text-center fw-light">
+              Fx per Hour
+            </mat-card-title>
+            <mat-card-content>
+              <canvas id="myChart2"></canvas>
+            </mat-card-content>
+          </mat-card>
+          <mat-card class="col-3 mt-2 bk-glass-blue">
+            <mat-card-title class="blue-color text-center fw-light">
+              Fx per Hour
+            </mat-card-title>
+            <mat-card-content>
+              <ul class="list-group">
+                <ng-container *ngFor="let count of countFxPerHoure">
+                  <li class="list-group-item">  <span>{{count.hour+'  '}} H</span> -->   
+                     <span class="blue-color" style="font-size: 1.2rem;">{{'     '+count.count}}</span></li>
+                </ng-container>
+              </ul>
+            </mat-card-content>
+          </mat-card>
+          <mat-card class="col-3 mt-2 bk-glass-blue">
+            <mat-card-title class="blue-color text-center fw-light ">
+              Fx per Hour
+            </mat-card-title>
+            <mat-card-content>
+              <ul class="list-group bk-glass-orange">
+                <ng-container *ngFor="let count of countFxPerHoure">
+                  <li class="list-group-item">  <span>{{count.hour+'  '}} H</span> -->   
+                     <span class="blue-color" style="font-size: 1.2rem;">{{'     '+count.count}}</span></li>
+                </ng-container>
+              </ul>
+            </mat-card-content>
+          </mat-card>
+          <mat-card class="col-6 mt-2 bk-glass-blue " style="height:400px;">
+            <mat-card-title class="blue-color text-center fw-light">
+              Count of packages per Ref
+            </mat-card-title>
+            <mat-card-content class="h-100" >
+              <canvas id="harnessPerHourChart" ></canvas>
+            </mat-card-content>
+          </mat-card>
+         
+          <mat-card class="col-6 mt-2 bk-glass-blue">
+            <mat-card-title class="blue-color text-center fw-light">
+              Count of Fx per Ref
+            </mat-card-title>
+            <mat-card-content>
+              <canvas id="progressChart"></canvas>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
