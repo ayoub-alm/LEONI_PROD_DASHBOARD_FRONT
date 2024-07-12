@@ -226,7 +226,7 @@ export class LineDisplayComponent implements OnInit {
       start.setHours(start.getHours()+ 1)  
     } while ( start < to)
     
-    return (this.totalQuantity * rangeTime) /  this.storageService.getItem("target")  * 100;
+    return ((this.totalQuantity) /  (this.storageService.getItem('target')) ) * 100;
   }
 
   
