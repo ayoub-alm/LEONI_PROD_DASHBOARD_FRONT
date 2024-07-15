@@ -34,7 +34,7 @@
         </form>
       </div>
       <div class="container-fluid mb-5">
-        <div class="row d-flex justify-content-around">
+        <div class="row d-flex justify-content-around ">
           <mat-card class="col-lg-3 bk-glass-blue ">
             <mat-card-content>
               <h6 class="text-center mb-2 light-blue-color d-flex justify-content-between shadow-sm p-1">
@@ -47,16 +47,16 @@
               </h6>
               <h6 class="text-center mb-2 light-blue-color d-flex justify-content-between shadow-sm p-1">
                 <span class="orange-color fw-light">N Operators :</span>
-                <span class="blue-color">{{ storageService.getItem('operatores') }}</span>
+                <span class="blue-color">{{ storageService.getItem('line_dashboard_operatores') }}</span>
               </h6>
               <h6 class="text-center mb-2 light-blue-color d-flex justify-content-between shadow-sm p-1">
                 <span class="orange-color fw-light">Current Time Range:</span>
-                <span class="blue-color">{{ storageService.getItem('rangeTime') }} H</span>
+                <span class="blue-color">{{ storageService.getItem('line_dashboard_rangeTime') }} H</span>
               </h6>
             </mat-card-content>
         </mat-card>
         
-          <mat-card class="col-lg-3  bk-glass-blue ">
+          <mat-card class="col-lg-2  bk-glass-blue ">
             <mat-card-title class="orange-color text-center fw-light">
               Total of FX
             </mat-card-title>
@@ -64,13 +64,22 @@
               <h5 class="text-center display-6 light-blue-color m-4">{{ totalQuantity ? totalQuantity : 0}}</h5>
             </mat-card-content>
           </mat-card>
+
+          <mat-card class="col-lg-2  bk-glass-blue ">
+            <mat-card-title class="orange-color text-center fw-light">
+              Expected
+            </mat-card-title>
+            <mat-card-content>
+              <h5 class="text-center display-6 blue-color  m-4">{{hourProduits.expected.toFixed(1)}}</h5>
+            </mat-card-content>
+          </mat-card>
            
-          <mat-card class="col-lg-3  bk-glass-blue ">
+          <mat-card class="col-lg-2  bk-glass-blue ">
             <mat-card-title class="orange-color text-center fw-light">
               Efficiency
             </mat-card-title>
             <mat-card-content>
-              <h5 class="text-center display-6 text-success m-4">{{ calculateEfficiency() | number: '1.2-2' }}%</h5>
+              <h5 class="text-center display-6 text-success m-4">{{ calculateEfficiency | number: '1.2-2' }}%</h5>
             </mat-card-content>
           </mat-card>
           <mat-card class="col-lg-3   bk-glass-blue">
@@ -97,21 +106,24 @@
           </mat-card>
 
 
-          <mat-card class="col-lg-3 mt-2" style="overflow: auto;">
-            <mat-card-title class="blue-color text-center fw-light">
-              Fx per Hour
+          <div class=" col-lg-6 mt-2 white-glass rounded   row justify-content-around "  >
+            <mat-card-title class="blue-color  my-auto  ">
+              <h2 class="d-flex justify-content-around my-auto">
+                 Harness per hour
+               </h2>
             </mat-card-title>
-            <mat-card-content>
-              <ul class="list-group p-3 orange-color " style="list-style: none ;">
-                <ng-container *ngFor="let count of countFxPerHour" >
-                  <li class=" text-center  mb-2 bk-glass-blue "> 
-                     <span>{{count.hour+'  '}} H</span> -->   
-                     <span class="blue-color" style="font-size: 1.2rem;">{{'     '+count.total_quantity}}</span>
-                  </li>
-                </ng-container>
-              </ul>
-            </mat-card-content>
-          </mat-card>
+            <div class="col-6 p-1 rounded-4 overflow-hidden" *ngFor="let count of countFxPerHour   ">
+              <mat-card  class="overflow-hidden orange-color fw-blod d-flex  shadow-sm rounded-4 shadow-sm  "  
+              [class]="count.total_quantity > 0 ? '' : 'bg-danger-subtle'"  >
+                <div class="d-flex justify-content-around shadow-lg border">
+                <h3  class=" blue-color my-auto">{{count.hour+'h - -> ' +(count.hour+1)}}h</h3>    
+                <h2 [class]="count.total_quantity > 0 ? 'text-orange' : 'text-danger'" >
+                  {{'     '+count.total_quantity}}
+                </h2>
+                </div>
+              </mat-card >
+            </div>
+          </div>
 
 
           <mat-card class="col-lg-6 mt-2 bk-glass-blue">
@@ -123,6 +135,9 @@
             </mat-card-content>
           </mat-card>
 
+          
+
+        <div class="row" >
           <mat-card class="col-lg-3 mt-2 bk-glass-blue"  style="max-height: 400px;overflow: auto;">
             <mat-card-title class="blue-color text-center fw-light">
               Quantity per Reference  
@@ -137,22 +152,22 @@
               </ul>
             </mat-card-content>
           </mat-card>
-
-        <div class="row" >
-          <mat-card class="col-lg-3 mt-2  bk-glass-blue" >
-            <mat-card-title class="orange-color text-center fw-light">
-              Count of Packages
-            </mat-card-title>
-            <mat-card-content>
-              <h5 class="text-center display-6 light-blue-color m-4">{{ countPackages }}</h5>
-            </mat-card-content>
-          </mat-card>
+          
           <mat-card class="col-lg-6 mt-2 bk-glass-blue" >
             <mat-card-title class="blue-color text-center fw-light" >
               Quantity per Reference
             </mat-card-title>
             <mat-card-content>
               <canvas id="quantityPerRefChart" style="max-height: 300px;"></canvas>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="col-lg-3 mt-2  bk-glass-blue" >
+            <mat-card-title class="orange-color text-center fw-light">
+              Count of Packages
+            </mat-card-title>
+            <mat-card-content class="my-auto">
+              <h1 class="text-center my-auto fw-blod light-blue-color ">{{ countPackages }}</h1>
             </mat-card-content>
           </mat-card>
         </div>

@@ -28,7 +28,7 @@ export class LineDashboardComponent implements OnInit {
   efficiency: number = 0;
   countFxPerHour: CountHourLineDto[] =[];
   countOfPackagePerHour: CountBoxPerHourLineDto[] = [];
-  hourProduits:HourProduitsDTO = new HourProduitsDTO(0,0,0);
+  hourProduits:HourProduitsDTO = new HourProduitsDTO(0,0,0,0);
   filterForm: FormGroup = this.formBuilder.group({
     from: [this.formatDate(new Date()), Validators.required],
     to: [this.formatDate(new Date()), Validators.required]
@@ -105,7 +105,8 @@ export class LineDashboardComponent implements OnInit {
     const filters =  {
       from: this.formatDate(this.filterForm.get('from')?.value),
       to: this.formatDate(this.filterForm.get('to')?.value),
-      temps_game: this.storageService.getItem('rangeTime')
+      temps_game: this.storageService.getItem('line_dashboard_rangeTime'),
+      vsm:this.storageService.getItem('line_dashboard_operatores')
       }
     
     this.lineDashboardService.getTotalQuantity(filters).subscribe(
@@ -145,6 +146,7 @@ export class LineDashboardComponent implements OnInit {
     this.lineDashboardService.getHourProduitsDTO(filters).subscribe(
       (data:any) => {
         this.hourProduits = data;
+        this.efficiency = data.efficiency
         // Update other data and charts as needed
         this.updateCharts();
       },
@@ -189,12 +191,14 @@ export class LineDashboardComponent implements OnInit {
     // Other chart updates
   }
 
-  calculateEfficiency(): number {
+  get calculateEfficiency(): number {
     // Implement efficiency calculation logic based on totalQuantity and any other relevant data
-    const rangeTime = this.storageService.getItem("rangeTime")
+    const rangeTime = this.storageService.getItem("Line_dashboard_rangeTime")
+    const operators = this.storageService.getItem("line_dashboard_operatores") 
+    // this.efficiency = (this.totalQuantity * rangeTime) / (operators * this.hourProduits.posted_hours) * 100;
+    console.log(this.efficiency);
+    return this.efficiency
     
-    const operators = this.storageService.getItem("operatores") 
-    return (this.totalQuantity * rangeTime) / (operators * this.hourProduits.posted_hours) *100;
   }
 
   
@@ -226,12 +230,27 @@ export class LineDashboardComponent implements OnInit {
   }
 
   updateHourlyQuantityChart(): void {
-   
-            const chart = Chart.getChart('hourlyQuantityChart') as Chart;
-        chart.data.labels = this.countFxPerHour.map((item: any) => item.hour);
-        chart.data.datasets[0].data = this.countFxPerHour.map((item: any) => item.total_quantity);
-        chart.update();
+    let postedHours: CountHourLineDto[] = []
+    let start = new Date(this.formatDate(this.filterForm.get('from')?.value))
+    let to = new Date(this.formatDate(this.filterForm.get('to')?.value))
+    do {
+      let hourInApiHours =  this.countFxPerHour.find(hour => hour.hour == start.getHours())
+      if(hourInApiHours) {
+        postedHours.push(new CountHourLineDto(hourInApiHours.total_quantity,start.getHours()))
+      }else{
+        console.log("not found");
+        postedHours.push(new CountHourLineDto(0,start.getHours()))
       }
+      start.setHours(start.getHours()+ 1)  
+    } while ( start < to)
+
+    this.countFxPerHour = postedHours
+
+    const chart = Chart.getChart('hourlyQuantityChart') as Chart;
+    chart.data.labels = this.countFxPerHour.map((item: any,index ) => item.hour + 'h -> ' + (item.hour + 1)+'h');
+    chart.data.datasets[0].data = this.countFxPerHour.map((item: any) => item.total_quantity);
+    chart.update();
+  }
 
 
   openDialog(): void {

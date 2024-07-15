@@ -29,7 +29,7 @@ export class LineDisplayComponent implements OnInit {
   efficiency: number = 0;
   countFxPerHour: CountHourLineDto[] =[];
   countOfPackagePerHour: CountBoxPerHourLineDto[] = [];
-  hourProduits:HourProduitsDTO = new HourProduitsDTO(0,0,0);
+  hourProduits:HourProduitsDTO = new HourProduitsDTO(0,0,0,0);
   filterForm: FormGroup = this.formBuilder.group({
     from: [this.formatDate(new Date()), Validators.required],
     to: [this.formatDate(new Date()), Validators.required]
@@ -262,7 +262,9 @@ export class LineDisplayComponent implements OnInit {
         let postedHours: CountHourLineDto[] = []
         let start = new Date(this.formatDate(this.filterForm.get('from')?.value))
         let to = new Date(this.formatDate(this.filterForm.get('to')?.value))
+        let hourCout = 0;
         do {
+      
           let hourInApiHours =  this.countFxPerHour.find(hour => hour.hour == start.getHours())
           if(hourInApiHours) {
             postedHours.push(new CountHourLineDto(hourInApiHours.total_quantity,start.getHours()))
@@ -271,7 +273,8 @@ export class LineDisplayComponent implements OnInit {
             postedHours.push(new CountHourLineDto(0,start.getHours()))
           }
           start.setHours(start.getHours()+ 1)  
-        } while ( start < to)
+          hourCout++;
+        } while ( hourCout < 8)
 
         this.countFxPerHour = postedHours
 
@@ -384,9 +387,9 @@ export class LineDisplayComponent implements OnInit {
   }
 
   getDeliveredClass(){
-   return this.totalQuantity >= this.calculateExpected() ? 'success-glass': 'danger-glass';
+  //  return this.totalQuantity >= this.calculateExpected() ? ' text-success': 'text-danger';
+   return this.totalQuantity >= this.calculateExpected() ? ' success-glass': 'danger-glass';
   }
-
 
   getFormattedDifference(): string {
     const difference =   this.totalQuantity - this.calculateExpected();

@@ -37,11 +37,13 @@ export class HourProduitsDTO {
     posted_hours: number;
     productive_hours: number;
     total_quantity: number;
+    expected:number
 
-    constructor(posted_hours: number, productive_hours: number, total_quantity: number) {
+    constructor(posted_hours: number, productive_hours: number, total_quantity: number,expected:number) {
         this.posted_hours = posted_hours;
         this.productive_hours = productive_hours;
         this.total_quantity = total_quantity;
+        this.expected = expected
     }
 }
 

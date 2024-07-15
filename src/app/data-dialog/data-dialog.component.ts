@@ -17,8 +17,8 @@ import { MatButtonModule } from '@angular/material/button';
 export class DataDialogComponent {
 
   confForm: FormGroup = this.formBuilder.group({
-    operatores: [this.storageService.getItem('operatores'), Validators.required],
-    rangeTime: [this.storageService.getItem('rangeTime'), Validators.required]
+    operatores: [this.storageService.getItem('line_dashboard_operatores'), Validators.required],
+    rangeTime: [this.storageService.getItem('line_dashboard_rangeTime'), Validators.required]
   });
 
   constructor(
@@ -32,8 +32,9 @@ export class DataDialogComponent {
     if (this.confForm.valid) {
       let rangeTimeValue = this.confForm.get('rangeTime')?.value;
       let operatorsValue = this.confForm.get('operatores')?.value;
-      this.storageService.setItem('rangeTime', rangeTimeValue);
-      this.storageService.setItem('operatores', operatorsValue);
+      this.storageService.setItem('line_dashboard_rangeTime', rangeTimeValue);
+      this.storageService.setItem('line_dashboard_operatores', operatorsValue);
+      window.location.reload()
       this.dialogRef.close();
     } else {
       this.snackBar.open("Please enter correct data", "OK", { duration: 3000 });
