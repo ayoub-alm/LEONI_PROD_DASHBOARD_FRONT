@@ -1,54 +1,64 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, tap } from "rxjs";
 import { routes } from "../app.routes";
 import { BoxCount, CountDto, CountHourDto } from "../dtos/box.count";
-
+import { TotalQuantity } from "../dtos/Line.dashboard.dto";
+import { ApiResponse } from "../dtos/global.dashboard.dto";
 @Injectable({
     providedIn:'root'
 })
 export class DashboardService{
     constructor(private http: HttpClient){}
-    private baseUrl = "http://localhost:3000"
-
-
-    /**
-     * 
-     * @returns {BoxCount} List Of Box Coun 
-     */
-    getCountOfBoxPerRef(): Observable<BoxCount[]>{
-        return this.http.get<BoxCount[]>(`${this.baseUrl}/api/count-of-box-by-ref`)
-    }
-
-    /**
-     * 
-     * @returns {BoxCount} List Of Box Coun 
-     */
-    getCountOfFxPerRef(): Observable<BoxCount[]>{
-        return this.http.get<BoxCount[]>(`${this.baseUrl}/api/count-of-fx-by-ref`)
-    }
-
-
-    getCountOfbox():Observable<CountDto>{
-        return this.http.get<CountDto>(`${this.baseUrl}/api/count-of-boxs`).pipe(
-            tap(value => new CountDto(value.total_quantity))
-        )
-    }
-
-
-    getCountOfFx():Observable<CountDto>{
-        return this.http.get<CountDto>(`${this.baseUrl}/api/count-of-fx`)
-    }
+    private baseUrl = "http://localhost:3000/api/global-dashboard"
 
 
 
-  getDataWithFilter(filters: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/api/data-with-filter`, filters);
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
+
+
+
+  getTotalQuantity(filters: any): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${this.baseUrl}/total-quantity`, filters, this.httpOptions);
+  }
+
+  getBoxCount(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/box-count`, filters, this.httpOptions);
+  }
+
+  getAverageQuantity(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/average-quantity`, filters, this.httpOptions);
+  }
+
+  getCountByCodeFournisseur(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/sum-by-code-fournisseur`, filters, this.httpOptions);
+  }
+
+  getCountOfPackageByHour(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/count-by-hour`, filters, this.httpOptions);
+  }
+
+  getCountByOperator(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/count-by-operator`, filters, this.httpOptions);
+  }
+
+  getHourlyQuantity(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/hourly-quantity`, filters, this.httpOptions);
+  }
+
+  getQuantityByHour(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/quantity-by-hour`, filters, this.httpOptions);
   }
 
 
-  getFxPerHourInShift(): Observable<CountHourDto[]> {
-    return this.http.get<CountHourDto[]>(`${this.baseUrl}/api/fx-per-hour-in-shift`);
+  getHourProduitsDTO(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/productive-hours`, filters, this.httpOptions);
+  }
+
+  getCurrentQuantity(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/total-quantity-current`, filters, this.httpOptions);
   }
     
 }

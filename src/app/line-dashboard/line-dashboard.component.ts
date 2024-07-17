@@ -2,7 +2,7 @@ import { Component, OnInit} from '@angular/core';
 import {BaseChartDirective} from "ng2-charts";
 import Chart from 'chart.js/auto';
 import {MatCardModule} from "@angular/material/card";
-import {RouterOutlet} from "@angular/router";
+import {Router, RouterOutlet} from "@angular/router";
 import { BoxCount, CountDto, CountHourDto } from '../dtos/box.count';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -40,7 +40,8 @@ export class LineDashboardComponent implements OnInit {
     private formBuilder: FormBuilder,
     private lineDashboardService: LineDashboardService,
     public dialog: MatDialog,
-    public storageService: StorageService
+    public storageService: StorageService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -236,6 +237,7 @@ export class LineDashboardComponent implements OnInit {
     do {
       let hourInApiHours =  this.countFxPerHour.find(hour => hour.hour == start.getHours())
       if(hourInApiHours) {
+          if(!(postedHours.find(hour => hour.hour == hourInApiHours.hour )))
         postedHours.push(new CountHourLineDto(hourInApiHours.total_quantity,start.getHours()))
       }else{
         console.log("not found");
@@ -312,6 +314,10 @@ export class LineDashboardComponent implements OnInit {
   }
   printReport(): void{
     window.print()
+  }
+
+  naviagteToHome(){
+    this.router.navigateByUrl('/');
   }
 }
 

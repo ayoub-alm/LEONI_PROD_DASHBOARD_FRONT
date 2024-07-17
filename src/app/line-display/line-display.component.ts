@@ -54,7 +54,7 @@ export class LineDisplayComponent implements OnInit {
     this.initQuantityPerRefChart()
     setInterval(() => {
       window.location.reload();
-    }, 30000); 
+    }, 60000); 
 
     setInterval(() => {
       this.currentTime = new Date();
@@ -216,17 +216,25 @@ export class LineDisplayComponent implements OnInit {
    */
   calculateEfficiency(): number {
     // Implement efficiency calculation logic based on totalQuantity and any other relevant data
-    const rangeTime = this.storageService.getItem("rangeTime")
-    const operators = this.storageService.getItem("operatores") 
+    const rangeTime = this.storageService.getItem("line_disply_rangeTime")
+    const operators = this.storageService.getItem("line_disply_operatores") 
     let start = new Date(this.formatDate(this.filterForm.get('from')?.value))
     let to = new Date()
     let postedHours = 0 ;
+    let hours = 0;
     do{
+      hours++
       postedHours++
       start.setHours(start.getHours()+ 1)  
-    } while ( start < to)
-    
-    return ((this.totalQuantity) /  (this.storageService.getItem('target')) ) * 100;
+    } while ( hours < 8)
+    if(this.storageService.getItem('line_disply_efficiency') === 1){
+  //  alert('normal');
+   
+      return ((this.totalQuantity * rangeTime)/(operators * hours)) * 100;
+    }else{
+      // alert('defult');
+       return ((this.totalQuantity) /  (this.storageService.getItem('line_disply_target')) ) * 100;
+    }
   }
 
   
@@ -365,9 +373,9 @@ export class LineDisplayComponent implements OnInit {
   getOpbjectif(): number{
     // const rangeTime = this.storageService.getItem("rangeTime")
     // const operators = this.storageService.getItem("operatores") 
-    const gole =  this.storageService.getItem("target") 
+    const gole =  this.storageService.getItem("line_disply_target") ? this.storageService.getItem("line_disply_target") : 0; 
     // let objectif = (operators * this.hourProduits.posted_hours) / rangeTime
-    return parseInt(gole.toFixed(0))
+    return parseInt(gole)
   }
  /**
   * 
@@ -383,7 +391,7 @@ export class LineDisplayComponent implements OnInit {
       start.setHours(start.getHours()+ 1)  
     } while ( start < to)
     
-    return (( this.storageService.getItem('target') / 8) * hourCoutn);
+    return (( this.storageService.getItem('line_disply_target') / 8) * hourCoutn);
   }
 
   getDeliveredClass(){
